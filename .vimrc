@@ -6,11 +6,13 @@ call pathogen#helptags()
 
 filetype plugin indent on
 syntax on
+set background=dark
+colorscheme solarized
 set paste
 set number
 set encoding=utf-8
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
-map <C-n> :NERDTreeToggle<CR>
+" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+" map <C-n> :NERDTreeToggle<CR>
 map <C-c> :PymodeLintAuto<CR>
 set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
 set foldmethod=indent
@@ -20,21 +22,17 @@ set smartindent     " auto-indent things in braces
 set expandtab       " away with those pesky tabs
 set shiftwidth=4    " number of spaces per indent level
 set softtabstop=4   " number of spaces to e.g. delete with backspace
-" set cindent         " auto-indent things in braces, loops, conditions, etc.
-" set formatoptions+=ro " keep indenting block comments
 
 vnoremap <silent> s //e<C-r>=&selection=='exclusive'?'+1':''<CR><CR>
     \:<C-u>call histdel('search',-1)<Bar>let @/=histget('search',-1)<CR>gv
-omap s :normal vs<CR>
-
-"With the following in your vimrc, you can switch to the next buffer by pressing F8, or the previous buffer by pressing Shift-F8.If the target buffer is already displayed in a window in one of the tabs, that window will be displayed. Otherwise, the current window will be split, and the target buffer will be displayed in the new window.
-set switchbuf=usetab
-nnoremap <F8> :sbnext<CR>
-nnoremap <S-F8> :sbprevious<CR>
-
 let g:Powerline_symbols="fancy"
 
 " Keys:
+" <space><space> Fuzzy search
+" <space>f      Unite search
+" <space>b      bookmarks
+" º             Search word on all files in current dir
+" <space>/      Search word in all files in current dir
 " za/zc         Fold/unfold
 " {i}gt         Change to #i tab
 " :tabn         Change to next tab
@@ -54,7 +52,7 @@ let g:Powerline_symbols="fancy"
 " [M            Jump on previous class or method (normal, visual, operator modes)
 " ]M            Jump on next class or method (normal, visual, operator modes)
 
-let g:pymode_options_max_line_length = 99
+let g:pymode_options_max_line_length = 79
 let g:pymode_rope = 1
 let g:pymode_rope_completion = 1
 let g:pymode_rope_complete_on_dot = 1
@@ -87,3 +85,24 @@ let g:pymode_syntax_space_errors = g:pymode_syntax_all
 
 " Don't autofold code
 let g:pymode_folding = 1
+
+" ----------------------------
+"       File Management
+" ----------------------------
+let g:unite_source_history_yank_enable = 1
+try
+  let g:unite_source_rec_async_command='ag --nocolor --nogroup -g ""'
+  call unite#filters#matcher_default#use(['matcher_fuzzy'])
+catch
+endtry
+" search a file in the filetree
+nnoremap <space><space> :vsplit<cr> :<C-u>Unite -start-insert file_rec/async<cr>
+nnoremap <space>f :vsplit<cr> :<C-u>Unite file<cr>
+nnoremap <space>g :vsplit<cr> :<C-u>Unite -start-insert file_rec/git<cr>
+nnoremap <space>b :<C-u>Unite buffer bookmark<CR>
+" reset not it is <C-l> normally
+:nnoremap <space>r <Plug>(unite_restart)
+
+" --- type ° to search the word in all files in the current dir
+nmap º :Ag <c-r>=expand("<cword>")<cr><cr>
+nnoremap <space>/ :Ag
