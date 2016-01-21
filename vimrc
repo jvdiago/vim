@@ -1,31 +1,82 @@
-" Pathogen load
-filetype off
+call plug#begin('~/.vim/plugged')
+Plug 'altercation/vim-colors-solarized'
+" solarized colorscheme
+Plug 'altercation/vim-colors-solarized'
+" Right way to handle trailing-whitespace
+Plug 'bronson/vim-trailing-whitespace'
+" Unite
+"   depend on vimproc
+"   you have to go to .vim/plugin/vimproc.vim and do a ./make
+Plug 'Shougo/vimproc.vim'
+Plug 'Shougo/unite.vim'
+" GIT
+Plug 'tpope/vim-fugitive'
+Plug 'powerline/powerline'
 
-call pathogen#infect()
-call pathogen#helptags()
+Plug 'tmhedberg/SimpylFold'
+Plug 'vim-scripts/indentpython.vim'
+Plug 'Valloric/YouCompleteMe'
+Plug 'scrooloose/syntastic'
+Plug 'rking/ag.vim'
+call plug#end()
 
-filetype plugin indent on
+set rtp+=~/.vim/plugged/powerline/powerline/bindings/vim
+set laststatus=2
+let g:Powerline_symbols="fancy"
+
 syntax on
+let python_highlight_all=1
+let g:syntastic_python_checkers = ['flake8']
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_auto_loc_list = 2
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_enable_signs = 1
+set number
+
 set background=dark
 colorscheme solarized
-set paste
-set number
+
 set encoding=utf-8
+
+" Enable folding
+set foldmethod=indent
+set foldlevel=99
+
+au BufNewFile,BufRead *.py
+    \ set colorcolumn=80
+
+au BufNewFile,BufRead *.js, *.html, *.css
+    \ set tabstop=2
+    \ set softtabstop=2
+    \ set shiftwidth=2
+
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set textwidth=79
+set expandtab
+set autoindent
+set fileformat=unix
+
+"python with virtualenv support
+py << EOF
+import os
+import sys
+if 'VIRTUAL_ENV' in os.environ:
+    project_base_dir = os.environ['VIRTUAL_ENV']
+    activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+    execfile(activate_this, dict(__file__=activate_this))
+EOF
+
+let g:ycm_autoclose_preview_window_after_completion=1
+map <C-g>  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
 " autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 " map <C-n> :NERDTreeToggle<CR>
-map <C-c> :PymodeLintAuto<CR>
-set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
-set foldmethod=indent
-set laststatus=2
-set foldlevel=99
-set smartindent     " auto-indent things in braces
-set expandtab       " away with those pesky tabs
-set shiftwidth=4    " number of spaces per indent level
-set softtabstop=4   " number of spaces to e.g. delete with backspace
 
-vnoremap <silent> s //e<C-r>=&selection=='exclusive'?'+1':''<CR><CR>
-    \:<C-u>call histdel('search',-1)<Bar>let @/=histget('search',-1)<CR>gv
-let g:Powerline_symbols="fancy"
 
 " Keys:
 " <space><space> Fuzzy search
@@ -52,39 +103,6 @@ let g:Powerline_symbols="fancy"
 " [M            Jump on previous class or method (normal, visual, operator modes)
 " ]M            Jump on next class or method (normal, visual, operator modes)
 
-let g:pymode_options_max_line_length = 79
-let g:pymode_rope = 1
-let g:pymode_rope_completion = 1
-let g:pymode_rope_complete_on_dot = 1
-let g:pymode_rope_autoimport = 1
-let g:pymode_rope_completion_bind = '<C-p>'
-let g:pymode_indent = 1
-
-" Documentation
-let g:pymode_doc = 1
-let g:pymode_doc_key = 'K'
-"Linting
-let g:pymode_lint = 1
-let g:pymode_lint_checker = "pyflakes,pep8"
-let g:pymode_lint_cwindow = 0
-" Auto check on save
-let g:pymode_lint_write = 1
-
-" Support virtualenv
-let g:pymode_virtualenv = 1
-
-" Enable breakpoints plugin
-let g:pymode_breakpoint = 1
-let g:pymode_breakpoint_bind = '<leader>b'
-
-" syntax highlighting
-let g:pymode_syntax = 1
-let g:pymode_syntax_all = 1
-let g:pymode_syntax_indent_errors = g:pymode_syntax_all
-let g:pymode_syntax_space_errors = g:pymode_syntax_all
-
-" Don't autofold code
-let g:pymode_folding = 1
 
 " ----------------------------
 "       File Management
