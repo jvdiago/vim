@@ -18,6 +18,7 @@ Plug 'vim-scripts/indentpython.vim'
 Plug 'Valloric/YouCompleteMe'
 Plug 'scrooloose/syntastic'
 Plug 'rking/ag.vim'
+Plug 'tell-k/vim-autopep8'
 call plug#end()
 
 set rtp+=~/.vim/plugged/powerline/powerline/bindings/vim
@@ -45,6 +46,10 @@ set encoding=utf-8
 set foldmethod=indent
 set foldlevel=99
 
+
+au BufNewFile,BufRead *.py
+    \ set textwidth=79
+
 au BufNewFile,BufRead *.py
     \ set colorcolumn=80
 
@@ -56,7 +61,6 @@ au BufNewFile,BufRead *.js, *.html, *.css
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
-set textwidth=79
 set expandtab
 set autoindent
 set fileformat=unix
@@ -71,6 +75,9 @@ if 'VIRTUAL_ENV' in os.environ:
     execfile(activate_this, dict(__file__=activate_this))
 EOF
 
+let g:autopep8_disable_show_diff=1
+
+let g:ycm_filetype_whitelist = { 'python':1 }
 let g:ycm_autoclose_preview_window_after_completion=1
 map <C-g>  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
